@@ -1,6 +1,5 @@
 -- =========================================================================================
 -- PHASE 1: DATA CLEANSING & VALIDATION
--- Target Role: Data Quality Analyst / Data Engineer
 -- Purpose: Standardize raw data, handle NULLs, and ensure data integrity before analysis.
 -- =========================================================================================
 
