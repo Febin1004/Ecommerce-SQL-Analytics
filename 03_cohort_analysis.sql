@@ -1,55 +1,76 @@
 -- =========================================================================================
 -- PHASE 3: COHORT & RETENTION ANALYSIS
--- Target Role: Data Analyst
--- Purpose: Segment customers based on acquisition month and track retention over time.
+-- Database: SQLite
+-- Purpose: Group customers by first-order month and track monthly activity.
 -- =========================================================================================
 
--- Step 1: Find the first purchase month for every unique customer (Cohort Group)
 WITH CustomerCohorts AS (
-    SELECT 
-        c.customer_unique_id,
-        DATE_TRUNC('month', MIN(o.order_purchase_timestamp)) AS cohort_month
-    FROM vw_clean_customers c
-    JOIN vw_clean_orders o ON c.customer_id = o.customer_id
-    GROUP BY c.customer_unique_id
+    -- Step 1: Find each customer's first order month
+    SELECT
+        CustomerID,
+        strftime('%Y-%m', MIN(OrderDate)) AS cohort_month
+    FROM Orders
+    GROUP BY CustomerID
 ),
 
--- Step 2: Map all purchases to their respective cohort group and calculate the month index
 OrderActivity AS (
-    SELECT 
-        o.order_id,
-        c.customer_unique_id,
-        DATE_TRUNC('month', o.order_purchase_timestamp) AS order_month,
+    -- Step 2: Map each order to its customer's cohort
+    SELECT
+        o.OrderID,
+        o.CustomerID,
+        strftime('%Y-%m', o.OrderDate) AS order_month,
         cc.cohort_month,
-        -- Calculate the number of months between the cohort month and the order month
-        EXTRACT(YEAR FROM AGE(DATE_TRUNC('month', o.order_purchase_timestamp), cc.cohort_month)) * 12 +
-        EXTRACT(MONTH FROM AGE(DATE_TRUNC('month', o.order_purchase_timestamp), cc.cohort_month)) AS month_index
-    FROM vw_clean_orders o
-    JOIN vw_clean_customers c ON o.customer_id = o.customer_id
-    JOIN CustomerCohorts cc ON c.customer_unique_id = cc.customer_unique_id
+        (
+            CAST(strftime('%Y', o.OrderDate) AS INTEGER)
+            - CAST(substr(cc.cohort_month, 1, 4) AS INTEGER)
+        ) * 12
+        +
+        (
+            CAST(strftime('%m', o.OrderDate) AS INTEGER)
+            - CAST(substr(cc.cohort_month, 6, 2) AS INTEGER)
+        ) AS month_index
+    FROM Orders AS o
+    JOIN CustomerCohorts AS cc
+        ON o.CustomerID = cc.CustomerID
+    WHERE o.OrderDate IS NOT NULL
 ),
 
--- Step 3: Aggregate the number of unique customers active in each month_index per cohort
 CohortSize AS (
-    SELECT 
+    -- Step 3: Count distinct active customers per cohort and month
+    SELECT
         cohort_month,
         month_index,
-        COUNT(DISTINCT customer_unique_id) AS active_customers
+        COUNT(DISTINCT CustomerID) AS active_customers
     FROM OrderActivity
     GROUP BY cohort_month, month_index
+),
+
+Retention AS (
+    -- Step 4: Get each cohort's initial size
+    SELECT
+        cohort_month,
+        month_index,
+        active_customers,
+        MAX(
+            CASE
+                WHEN month_index = 0 THEN active_customers
+            END
+        ) OVER (
+            PARTITION BY cohort_month
+        ) AS initial_cohort_size
+    FROM CohortSize
 )
 
--- Step 4: Pivot or display the retention numbers
-SELECT 
-    cs.cohort_month,
-    -- The size of the cohort at Month 0 (the initial acquisition month)
-    FIRST_VALUE(cs.active_customers) OVER (PARTITION BY cs.cohort_month ORDER BY cs.month_index) AS initial_cohort_size,
-    cs.month_index,
-    cs.active_customers,
-    -- Calculate Retention Rate
+-- Step 5: Calculate retention percentages
+SELECT
+    cohort_month,
+    month_index,
+    initial_cohort_size,
+    active_customers,
     ROUND(
-        cs.active_customers * 100.0 / 
-        FIRST_VALUE(cs.active_customers) OVER (PARTITION BY cs.cohort_month ORDER BY cs.month_index), 
-    2) AS retention_rate_pct
-FROM CohortSize cs
-ORDER BY cs.cohort_month, cs.month_index;
+        active_customers * 100.0
+        / NULLIF(initial_cohort_size, 0),
+        2
+    ) AS retention_rate_pct
+FROM Retention
+ORDER BY cohort_month, month_index;
