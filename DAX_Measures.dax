@@ -1,0 +1,40 @@
+/* 
+=========================================================
+POWER BI DAX MEASURES 
+=========================================================
+*/
+
+// 1. Total Revenue
+Total Revenue = SUM(Orders[Price])
+
+// 2. Total Orders
+Total Orders = DISTINCTCOUNT(Orders[OrderID])
+
+// 3. Average Order Value (AOV)
+Average Order Value = DIVIDE([Total Revenue], [Total Orders], 0)
+
+// 4. Year-to-Date (YTD) Revenue
+YTD Revenue = TOTALYTD([Total Revenue], 'Calendar'[Date])
+
+// 5. Previous Month Revenue
+Previous Month Revenue = CALCULATE([Total Revenue], DATEADD('Calendar'[Date], -1, MONTH))
+
+// 6. Month-over-Month (MoM) Growth %
+MoM Growth % = 
+VAR PrevMonth = [Previous Month Revenue]
+RETURN
+DIVIDE([Total Revenue] - PrevMonth, PrevMonth, 0)
+
+// 7. Average Delivery Days
+Average Delivery Days = 
+AVERAGEX(
+    Orders,
+    DATEDIFF(Orders[PurchaseDate], Orders[DeliveryDate], DAY)
+)
+
+// 8. Delayed Orders Count
+Delayed Orders = 
+CALCULATE(
+    [Total Orders],
+    FILTER(Orders, Orders[DeliveryDate] > Orders[EstimatedDeliveryDate])
+)
