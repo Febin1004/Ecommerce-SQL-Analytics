@@ -286,31 +286,25 @@ These features provide a foundation for further customer segmentation and predic
 ## Repository Structure
 
 ```text
-E-Commerce-Analytics-Pipeline/
+
+Ecommerce-SQL-Analytics/
 │
-├── 03_Ecommerce_Analytics_Project/
-│   │
-│   ├── Datasets/
-│   │   └── ecommerce_data.db
-│   │
-│   ├── SQL_Scripts/
-│   │   ├── 01_data_cleansing.sql
-│   │   ├── 02_kpi_dashboards.sql
-│   │   ├── 03_cohort_analysis.sql
-│   │   ├── 04_feature_engineering.sql
-│   │   ├── 05_product_performance.sql
-│   │   ├── 06_data_quality.sql
-│   │   └── inspect_database.sql
-│   │
-│   ├── Dashboard_Previews/
-│   │   ├── SALES OVERVIEW.png
-│   │   ├── PRODUCT PERFORMANCE ANALYTICS.png
-│   │   ├── CUSTOMER ANALYTICS.png
-│   │   └── ORDER & DELIVERY ANALYSIS.png
-│   │
-│   └── E-Commerce_Analytics.pbix
+├── 01_data_cleansing.sql
+├── 02_kpi_dashboards.sql
+├── 03_cohort_analysis.sql
+├── 04_feature_engineering.sql
+├── 05_product_performance.sql
+├── 06_data_quality.sql
+├── inspect_database.sql
+├── README.md
 │
-└── README.md
+├── CUSTOMER ANALYTICS.png
+├── ORDER & DELIVERY ANALYSIS.png
+├── PRODUCT PERFORMANCE ANALYTICS.png
+├── SALES OVERVIEW.png
+│
+└── ecommerce_data.db
+
 ```
 
 *Note: The structure above represents the project organization. Adjust filenames if they differ from the files currently present in your repository.*
@@ -328,13 +322,13 @@ E-Commerce-Analytics-Pipeline/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Febin1004/E-Commerce-Analytics-Pipeline.git
+git clone https://github.com/Febin1004/Ecommerce-SQL-Analytics.git
 ```
 
 Navigate to the project directory:
 
 ```bash
-cd E-Commerce-Analytics-Pipeline
+cd Ecommerce-SQL-Analytics
 ```
 
 ### 2. Open the SQLite Database
@@ -352,7 +346,7 @@ Open it using SQLite or a compatible database tool.
 Navigate to:
 
 ```text
-03_Ecommerce_Analytics_Project/SQL_Scripts/
+Ecommerce-SQL-Analytics/
 ```
 
 Run the scripts in the following order:
@@ -372,7 +366,7 @@ The scripts create analytical views used for reporting and analysis.
 Open:
 
 ```text
-03_Ecommerce_Analytics_Project/E-Commerce_Analytics.pbix
+Power BI dashboard: https://github.com/Febin1004/PowerBI-Ecommerce-Dashboard
 ```
 
 If Power BI requests a data source, connect it to the SQLite database using the configured SQLite data source or driver.
