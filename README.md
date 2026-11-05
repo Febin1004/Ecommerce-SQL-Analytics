@@ -237,19 +237,21 @@ Key analysis:
 ---
 
 
+
 ## Dashboard Previews
 
 ### Sales Overview
-![Sales Overview](SALES%20OVERVIEW.png)
+![Sales Overview](Dashboard_Previews/SALES%20OVERVIEW.png)
 
 ### Product Performance Analytics
-![Product Performance Analytics](PRODUCT%20PERFORMANCE%20ANALYTICS.png)
+![Product Performance Analytics](Dashboard_Previews/PRODUCT%20PERFORMANCE%20ANALYTICS.png)
 
 ### Customer Analytics
-![Customer Analytics](CUSTOMER%20ANALYTICS.png)
+![Customer Analytics](Dashboard_Previews/CUSTOMER%20ANALYTICS.png)
 
 ### Order & Delivery Analysis
-![Order & Delivery Analysis](ORDER%20%26%20DELIVERY%20ANALYSIS.png)
+![Order & Delivery Analysis](Dashboard_Previews/ORDER%20%26%20DELIVERY%20ANALYSIS.png)
+
 
 ---
 
